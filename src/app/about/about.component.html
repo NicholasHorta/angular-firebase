@@ -9,7 +9,18 @@
 
     <button mat-raised-button class="upload-btn" color="primary" (click)="uploadData()">Populate Database</button>
 
-    <button mat-raised-button color="accent" (click)="onReadDoc()"></button>
+    <button mat-raised-button color="accent" (click)="onReadDoc()">Read Document</button>
+    <button mat-raised-button color="accent" (click)="onReadCollection()">Read Collection</button>
+    <button mat-raised-button color="accent" (click)="onReadCollectionGroup()">Read Collection Group</button>
+    <button mat-raised-button color="accent" (click)="viewSnapshotChanges()">Listen to Snapshot Changes</button>
+    <button mat-raised-button color="accent" (click)="viewValueChanges()">Listen to Value Changes</button>
+
+    <div *ngIf="snapShotValues$ | async as values">
+      <h1>Price: {{values?.price}}</h1>
+    </div>
+    <div *ngIf="valueChangeValues$ | async as values">
+      <h1>Doc: {{values?.url}}</h1>
+    </div>
 
 </div>
 
