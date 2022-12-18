@@ -11,6 +11,10 @@ import { convertSnapshots } from "./db-utils";
 export class CoursesService {
   constructor(private db: AngularFirestore) {}
 
+  deleteCourse(courseId: string){
+    return from(this.db.doc(`courses/${courseId}`).delete())
+  }
+
   updateCourse(courseId: string, changes: Partial<Course>):Observable<any> {
     return from(this.db.doc(`courses/${courseId}`).update(changes))
   }

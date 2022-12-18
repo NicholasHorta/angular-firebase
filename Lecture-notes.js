@@ -80,4 +80,30 @@
 // !! MatDialog data input
 //| View the edit-course-dialog && courses-card-list components to view the inner workings
 
-// !! 
+// !! Deleting courses recipe
+
+/// deleteCourse(courseId: string){
+///    return from(this.db.doc(`courses/${courseId}`).delete())
+/// }
+
+//| Draws from the service
+/// onDeleteCourse(course: Course) {
+///   this.coursesSVC
+///     .deleteCourse(course.id)
+///     .pipe(
+///       tap(() => {
+///         console.log("Deleted course: ", course);
+///         this.courseDeleted.emit();
+///       }),
+///       catchError((err) => {
+///           console.log(err);
+///           alert('Could not delete course');
+///           return throwError(err)
+///       })
+///     )
+///     .subscribe();
+/// }
+
+//| BUT We need to ensure that nested collections are deleted too as the above will only delete the contents of the document, not nested collections
+
+
