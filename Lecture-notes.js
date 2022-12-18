@@ -76,3 +76,8 @@
 //? https://cloud.google.com/nodejs/docs/reference/firestore/latest#set
 //| When you use add() on a CollectionReference, you're unconditionally creating a new document in a collection, and that new document will have a unique id assigned to it. The data you pass will become the contents of the new document.
 //? https://cloud.google.com/nodejs/docs/reference/firestore/latest#add
+
+// !! MatDialog data input
+//| View the edit-course-dialog && courses-card-list components to view the inner workings
+
+// !! 
