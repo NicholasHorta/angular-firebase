@@ -45,6 +45,7 @@ export class CoursesCardListComponent implements OnInit {
             .afterClosed()
             .subscribe(val => {
                 if (val) {
+                    console.log(val);
                     this.courseEdited.emit();
                 }
             });

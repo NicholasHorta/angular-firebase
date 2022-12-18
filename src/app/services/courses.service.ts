@@ -11,6 +11,10 @@ import { convertSnapshots } from "./db-utils";
 export class CoursesService {
   constructor(private db: AngularFirestore) {}
 
+  updateCourse(courseId: string, changes: Partial<Course>):Observable<any> {
+    return from(this.db.doc(`courses/${courseId}`).update(changes))
+  }
+
   createCourse(newCourse: Partial<Course>, courseId?: string) {
     //> Getting the course with the highest seqNo, to build the data for the new course
     return this.db
