@@ -107,3 +107,19 @@
 //| BUT We need to ensure that nested collections are deleted too as the above will only delete the contents of the document, not nested collections
 
 
+//!! Firestore Transactional Batched Writes 
+
+//| We want to delete in a single transaction not only the course document, but every single additional document nested in other collections associated to the document
+//| As we cannot delete a collection, but a collection cannot exist with no documents, so the collection is therefor deleted
+//| For that, we'll need a batched write transaction. This ONLY has write operations so there are no read locks on the DB
+//! View deleteCourseAndLessons functions for information on the above
+
+//| Additionally...
+/// batch.set( ref, {...data}, {merge: boolean}? )
+//| Passing in the reference, and data
+//| Just like any firestore SET operation, this will override any data that exists there
+//| Unless we pass in an optional options object that allows you to merge the data WITH the existing data 
+
+/// batch.update( ref, {...fields we want to modify} )
+//| We can update with the above, by passing in a reference to the data
+//| And then the fields that we want to modify 

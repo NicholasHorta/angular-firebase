@@ -40,7 +40,7 @@ export class CoursesCardListComponent implements OnInit {
   onDeleteCourse(course: Course) {
     console.log(course);
     this.coursesSVC
-      .deleteCourse(course.id)
+      .deleteCourseAndLessons(course.id)
       .pipe(
         tap(() => {
           console.log("Deleted course: ", course);
