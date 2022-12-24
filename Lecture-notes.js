@@ -123,3 +123,14 @@
 /// batch.update( ref, {...fields we want to modify} )
 //| We can update with the above, by passing in a reference to the data
 //| And then the fields that we want to modify 
+
+
+//!! View Course Section 
+
+//| When we select an individual "view course" button in the courses page
+//| We're using the angular router to access these specific courses 
+//| Each URL will be unique to the course and we'll use the url to access the data to the course
+//: We'll do this using the router and router resolver immediately, before the router transition completes
+//| So when the user clicks the "view courses" button, the router will trigger a transition to the course page
+//| During that transition we'll be using a scpecial type of service called a router resolved in order to fetch the data from the db that the target page needs
+

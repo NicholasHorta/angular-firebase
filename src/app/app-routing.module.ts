@@ -7,6 +7,7 @@ import {LoginComponent} from './login/login.component';
 import {CreateCourseComponent} from './create-course/create-course.component';
 import {AngularFireAuthGuard, hasCustomClaim, redirectUnauthorizedTo} from '@angular/fire/auth-guard';
 import {CreateUserComponent} from './create-user/create-user.component';
+import { CourseResolver } from './services/course.resolver';
 
 const routes: Routes = [
   {
@@ -33,7 +34,13 @@ const routes: Routes = [
   },
   {
     path: 'courses/:courseUrl',
-    component: CourseComponent
+    component: CourseComponent,
+    resolve: {
+      //| The course property will be resolved by the CourseResolver
+      //| meaning when there is a routing transition, we need to find a course in order to make it available to the target component
+      //| And the process of fetching that data from somewhere in the db will be done by the course resolver 
+      course: CourseResolver
+    }
   },
   {
     path: '**',

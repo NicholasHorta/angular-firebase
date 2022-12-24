@@ -27,6 +27,8 @@
     "@angular/platform-browser": "~13.0.3",
     "@angular/platform-browser-dynamic": "~13.0.3",
     "@angular/router": "~13.0.3",
+    "@google-cloud/firestore": "^6.4.1",
+    "@google-cloud/storage": "^6.8.0",
     "firebase": "^8.2.6",
     "firebase-tools": "^11.1.0",
     "firebaseui": "^4.7.3",
