@@ -13,7 +13,7 @@ import { UserService } from './services/user.service';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private userSVC: UserService) {
+  constructor(public user: UserService, private router: Router) {
 
   }
 
@@ -21,4 +21,9 @@ export class AppComponent implements OnInit {
 
   }
 
+
+  logout(){
+    this.user.logout();
+    this.router.navigateByUrl('/login');
+  }
 }
