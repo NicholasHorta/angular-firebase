@@ -5,6 +5,7 @@ import { finalize, map, tap } from "rxjs/operators";
 import { Observable } from "rxjs";
 import { Lesson } from "../model/lesson";
 import { CoursesService } from "../services/courses.service";
+import { AngularFireAuth } from "@angular/fire/auth";
 
 @Component({
   selector: "course",
@@ -22,6 +23,7 @@ export class CourseComponent implements OnInit {
   constructor(private route: ActivatedRoute, private courses: CoursesService) {}
 
   ngOnInit() {
+
     //| Route snapshot is a snap in time at the very moment this method was called of the state of the activated route
     console.log(this.route.snapshot.data["course"]);
     this.course = this.route.snapshot.data["course"];
@@ -48,6 +50,7 @@ export class CourseComponent implements OnInit {
                 },
               ])
       );
+
   }
 
   loadMore() {
@@ -57,17 +60,7 @@ export class CourseComponent implements OnInit {
       .findLessons(this.course.id, "asc", this.lastPageLoaded)
       .pipe(finalize(() => (this.loading = false)))
       .subscribe((lessons) => {
-        console.log(
-          `%c C4 LOG from observable`,
-          `background: orange; color: cyan;`,
-          lessons
-        );
         this.lessons = this.lessons.concat(lessons);
-        console.log(
-          `%c C4 LOG component variable[]`,
-          `background: black; color: red;`,
-          this.lessons
-        );
       });
   }
 }

@@ -134,3 +134,17 @@
 //| So when the user clicks the "view courses" button, the router will trigger a transition to the course page
 //| During that transition we'll be using a scpecial type of service called a router resolved in order to fetch the data from the db that the target page needs
 
+//* ------------------------------------------------------------------------------------------------------------------------------------------------
+//* ------------------------------------------------------------------------------------------------------------------------------------------------
+//* ------------------------------------------------------------------------------------------------------------------------------------------------
+//* ------------------------------------------------------------------------------------------------------------------------------------------------
+
+//!! Authentication 
+
+//| Allows us to manage the authentication of users without having to store pwd's in your db
+//| Takes care of saving user credentials, sepeate of your main data in your db
+//| Can validate user email & pw, the auth service will then emit a JWT proving the id of the user to be used in the app 
+//| YOu can add admin rights to the JWT & give access to only certain features 
+//| Authentication is also integrated with Firestore security rules 
+
+//| Firebase UI - convenient and ready to use way of adding authentication to your application
