@@ -106,8 +106,7 @@
 
 //| BUT We need to ensure that nested collections are deleted too as the above will only delete the contents of the document, not nested collections
 
-
-//!! Firestore Transactional Batched Writes 
+//!! Firestore Transactional Batched Writes
 
 //| We want to delete in a single transaction not only the course document, but every single additional document nested in other collections associated to the document
 //| As we cannot delete a collection, but a collection cannot exist with no documents, so the collection is therefor deleted
@@ -118,17 +117,16 @@
 /// batch.set( ref, {...data}, {merge: boolean}? )
 //| Passing in the reference, and data
 //| Just like any firestore SET operation, this will override any data that exists there
-//| Unless we pass in an optional options object that allows you to merge the data WITH the existing data 
+//| Unless we pass in an optional options object that allows you to merge the data WITH the existing data
 
 /// batch.update( ref, {...fields we want to modify} )
 //| We can update with the above, by passing in a reference to the data
-//| And then the fields that we want to modify 
+//| And then the fields that we want to modify
 
-
-//!! View Course Section 
+//!! View Course Section
 
 //| When we select an individual "view course" button in the courses page
-//| We're using the angular router to access these specific courses 
+//| We're using the angular router to access these specific courses
 //| Each URL will be unique to the course and we'll use the url to access the data to the course
 //: We'll do this using the router and router resolver immediately, before the router transition completes
 //| So when the user clicks the "view courses" button, the router will trigger a transition to the course page
@@ -139,12 +137,105 @@
 //* ------------------------------------------------------------------------------------------------------------------------------------------------
 //* ------------------------------------------------------------------------------------------------------------------------------------------------
 
-//!! Authentication 
+//!! Authentication
 
 //| Allows us to manage the authentication of users without having to store pwd's in your db
 //| Takes care of saving user credentials, sepeate of your main data in your db
-//| Can validate user email & pw, the auth service will then emit a JWT proving the id of the user to be used in the app 
-//| YOu can add admin rights to the JWT & give access to only certain features 
-//| Authentication is also integrated with Firestore security rules 
+//| Can validate user email & pw, the auth service will then emit a JWT proving the id of the user to be used in the app
+//| YOu can add admin rights to the JWT & give access to only certain features
+//| Authentication is also integrated with Firestore security rules
 
 //| Firebase UI - convenient and ready to use way of adding authentication to your application
+
+//!! Firebase Security Rules
+
+//| firestore.rules file overview
+//> Version
+/// rules_version = '2';
+//> specifies which rules we are targeting, service keyword followed by WHICH
+//> It specifies that this is for a firestore db
+/// service cloud.firestore {
+//> Top level rule which specifies the path, this one is a top level rule
+//> every firestore rule we write needs one, the {} area takes path variables
+///   match /databases/{database}/documents {
+//| The above is specific to EVERY rule we write, each rules will have the above mentioned
+//> The ** wildcard matches every doc no matter what
+//> So in this case we are allowing read, write requests to ALL documents in every case
+///     match /{document=**} {
+///       allow read, write: if true
+///     }
+///   }
+/// }
+
+//| As a rule of thumb, we don't want to target any collections with firestore security rules
+//| We usually want to target documents
+//| And therefor, if we target a specific document, the nested collections will not be auto accessible
+//| The collections and subsequent documents within those will also need to be written rules for access to read/write
+//> This is the perfect occasion to nest those rules within the already set rule for the outer collection to reduce duplication of paths
+///   match /databases/{database}/documents/courses/{courseId} {
+///     allow read;
+///     match /lessons/{lessonId} {
+///       allow read;
+///     }
+///   }
+
+//| The ability to READ is an umbrella for multi options such as:
+//: Get
+//> gives us the permision to read a document, but ONLY one document. Meaning anyone can read any document on the courses collection
+//: List
+//> The ability to query the permission itself
+//> Allow us to decide if we want a given request to be able to query the collection or not
+//> We might want to allow individual documents to be read one at a time
+//> but we might want to impose conditions on the ability to query the collection
+//> The query could have a lot of data that we don't want anyone to issue a query for as tbhis could cause performance issues and increase costs
+
+//| The ability to WRITE is an umbrella for multi options such as:
+//: Create | Update | Delete
+//| And these can be given and inhibited independently
+
+//! TROUBLESHOOTING NOTE!
+//% For rules with the same path..
+//% If there is 1 rule that allows access to an item
+//% and 1000 rules that deny access to an item, THE ITEM IS ACCESSIBLE!
+//% If a condition grants access to a given request, that request will go through
+//% independent of where the condition is situated, order does not matter
+
+//? JWT
+//| The JWT we recieve is held in memory by the firebase SDK
+
+//| Whenever we do a firestore request from our web client using AngularFire
+//| the firebase SDK, which AngularFire uses under the hood, is going to grab the JWT which identifies the user
+//| and will attach the JWT to the request sent to the firestore db server
+
+//| So whenever a request for a read or write operation is made to the firestore db server
+//| it will include a JWT that uniquely identifies the user
+
+//| The JWT will include the users unique ID, and additional data known as a Custom Claim
+//| This is an object which allows us to cutomly build including fields relevant to our platform
+//: Custom Claim
+/// {
+///     "admin": true
+/// }
+//| There is a size limit, so we cannot add tons of data, but we can include useful data and privileges
+
+//| In our firestore.rules file we have access to the REQUEST object which is either a request to read or write data
+//| This REQUEST object gives us access to additional objects:
+//: auth | path | resource | time
+//$ https://firebase.google.com/docs/reference/rules
+
+//* Functions
+//| Functions in firestore rules are scope specific
+//| Functions MUST return a Boolean
+
+//* Firestore Schemas
+//| Gives us more security and control over the format of our data being input
+//| We can access the data we are trying to write via the resource.data
+//> This is data NOT YET written to the db
+/// request.resource.data;
+//| If we needed access to data in the db, and for instance is about to be replaced with new data
+/// resource.data;
+
+//: request.data - Gives you the data already in the db before the request gets committed
+//: request.resource.data -  Gives you the incoming data, the request is trying to update or insert into the db 
+
+//| This means that any property on the client side, even if set as optional, if we set it as a required field or set requirements on it on the firestore.rules file, it must be met as these are server side requirements.
