@@ -58,6 +58,7 @@ export class CoursesService {
   //. }
 
   updateCourse(courseId: string, changes: Partial<Course>): Observable<any> {
+    console.log(`%c C4 LOG `, `background: blue; color: orange;`, 'YO')
     return from(this.db.doc(`courses/${courseId}`).update(changes));
   }
 

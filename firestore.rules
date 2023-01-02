@@ -3,26 +3,40 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isAuthenticated() {
-      return request.auth.uid != null
+      return request.auth.uid != null;
+    }
+
+    function isAdmin(){
+      return isAuthenticated() && 'admin' in request.auth.token && request.auth.token.admin == true;
     }
 
     function isNonEmptyString(fieldName){
       return request.resource.data[fieldName] is string &&
-      request.resource.data[fieldName].size > 0
+      request.resource.data[fieldName].size() > 0;
     }
 
     function isValidCourse(){
       return request.resource.data.seqNo is number && 
       request.resource.data.seqNo >= 0 && 
-      isNonEmptyString("url")
+      isNonEmptyString("url");
+    }
+
+    function isKnownUser() {
+      return isAuthenticated() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
     }
 
     match /courses/{courseId} {
-      allow read: if isAuthenticated();
-      allow write: if isValidCourse() && isAuthenticated();
+      allow read: if isKnownUser();
+      allow create, update: if isValidCourse() && isAdmin();
+      allow delete: if isAdmin();
       match /lessons/{lessonId} {
-        allow read: if isAuthenticated();
+        allow read: if isKnownUser();
+        allow delete: if isAdmin();
       }
+    }
+
+    match /{path=**}/lessons/{lessonId} {
+      allow read: if isKnownUser();
     }
   }
 }

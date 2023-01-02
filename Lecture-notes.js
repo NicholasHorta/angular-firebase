@@ -239,3 +239,39 @@
 //: request.resource.data -  Gives you the incoming data, the request is trying to update or insert into the db 
 
 //| This means that any property on the client side, even if set as optional, if we set it as a required field or set requirements on it on the firestore.rules file, it must be met as these are server side requirements.
+
+//* Whitelist
+//| The following ensures our data is not only accessible to authenticated users exclusively 
+//| but the data can also only be read by pre-defined users
+//| This is called defining a WHITELIST where only these users can read the data from the db
+
+//| We can include variables in paths within the built in utility functions with - $(<variable>)
+//| The below is a util function to see that an doc/entry exists
+/// exists(/databases/$(database)/documents/users/$(request.auth.uid))
+//| We can also retrieve a property with the util function GET
+/// get(/databases/$(database)/documents/users/$(request.auth.uid)).data.<property>
+
+
+//!! RBAC - Role Based Access Control - Using 
+
+//| Given through Custom Claims object properties
+//| This cannot be given through the Front-End, this has to be done via a Node process or through a cloud function 
+//| 
+
+//!! RBAC - Role Based Access Control - Setting 
+
+//| To Be Written ----------------------------------
+
+//!! Security Rules for Collection Group Queries
+
+//| ** is a wildcard which targets anything that appears in its place
+//| {<variable>=**} - the variable represents the full path
+//| So if we need to access the current path, we can simply reference the variable name and this will represent that current path
+
+
+//!! AngularFire Route Guards 
+
+//| AngularFireAuthGuard provides a prebuilt canActivate Router Guard using AngularFireAuth. 
+//| By default unauthenticated users are not permitted to navigate to protected routes
+//$ https://github.com/angular/angularfire/blob/master/docs/auth/router-guards.md
+//! View this in the app-routing module 

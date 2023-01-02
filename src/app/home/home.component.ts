@@ -5,6 +5,7 @@ import { catchError, map } from "rxjs/operators";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
 import { CoursesService } from "../services/courses.service";
+import { UserService } from "../services/user.service";
 
 @Component({
   selector: "home",
@@ -16,7 +17,7 @@ export class HomeComponent implements OnInit {
 
   advancedCourses$: Observable<Course[]>;
 
-  constructor(private router: Router, private coursesService: CoursesService) {}
+  constructor(private router: Router, private coursesService: CoursesService, public usersSVC: UserService) {}
 
   ngOnInit() {
     this.reloadCourses();

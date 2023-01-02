@@ -9,20 +9,34 @@ import {AngularFireAuthGuard, hasCustomClaim, redirectUnauthorizedTo} from '@ang
 import {CreateUserComponent} from './create-user/create-user.component';
 import { CourseResolver } from './services/course.resolver';
 
+//| The following are function references which we provide the built in functions the AngularFireAuthGuard route guard gives us
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
+const adminOnly = () => hasCustomClaim("admin");
+
 const routes: Routes = [
   {
     path: '',
-    component: HomeComponent
+    component: HomeComponent,
+    canActivate: [AngularFireAuthGuard],
+    data: {
+      authGuardPipe: redirectUnauthorizedToLogin
+    }
   },
   {
     path: 'create-course',
-    component: CreateCourseComponent
-
+    component: CreateCourseComponent,
+    canActivate: [AngularFireAuthGuard],
+    data: {
+      authGuardPipe: adminOnly
+    }
   },
   {
     path: 'create-user',
-    component: CreateUserComponent
-
+    component: CreateUserComponent,
+    canActivate: [AngularFireAuthGuard],
+    data: {
+      authGuardPipe: adminOnly
+    }
   },
   {
     path: 'about',
@@ -40,6 +54,10 @@ const routes: Routes = [
       //| meaning when there is a routing transition, we need to find a course in order to make it available to the target component
       //| And the process of fetching that data from somewhere in the db will be done by the course resolver 
       course: CourseResolver
+    },
+    canActivate: [AngularFireAuthGuard],
+    data: {
+      authGuardPipe: redirectUnauthorizedToLogin
     }
   },
   {
