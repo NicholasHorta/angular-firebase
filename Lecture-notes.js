@@ -187,7 +187,7 @@
 //> Allow us to decide if we want a given request to be able to query the collection or not
 //> We might want to allow individual documents to be read one at a time
 //> but we might want to impose conditions on the ability to query the collection
-//> The query could have a lot of data that we don't want anyone to issue a query for as tbhis could cause performance issues and increase costs
+//> The query could have a lot of data that we don't want anyone to issue a query for as this could cause performance issues and increase costs
 
 //| The ability to WRITE is an umbrella for multi options such as:
 //: Create | Update | Delete
@@ -280,3 +280,6 @@
 //!! Serverless File Upload With Firebase Storage 
 //| AngularFireStorage - Service used 
 //| The upload action will be a change event
+
+//| In the event of updating storage rules
+/// firebase deploy --only storage
