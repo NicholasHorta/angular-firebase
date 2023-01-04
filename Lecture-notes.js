@@ -275,3 +275,8 @@
 //| By default unauthenticated users are not permitted to navigate to protected routes
 //$ https://github.com/angular/angularfire/blob/master/docs/auth/router-guards.md
 //! View this in the app-routing module 
+
+
+//!! Serverless File Upload With Firebase Storage 
+//| AngularFireStorage - Service used 
+//| The upload action will be a change event
