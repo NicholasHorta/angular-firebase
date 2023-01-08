@@ -236,12 +236,12 @@
 /// resource.data;
 
 //: request.data - Gives you the data already in the db before the request gets committed
-//: request.resource.data -  Gives you the incoming data, the request is trying to update or insert into the db 
+//: request.resource.data -  Gives you the incoming data, the request is trying to update or insert into the db
 
 //| This means that any property on the client side, even if set as optional, if we set it as a required field or set requirements on it on the firestore.rules file, it must be met as these are server side requirements.
 
 //* Whitelist
-//| The following ensures our data is not only accessible to authenticated users exclusively 
+//| The following ensures our data is not only accessible to authenticated users exclusively
 //| but the data can also only be read by pre-defined users
 //| This is called defining a WHITELIST where only these users can read the data from the db
 
@@ -251,16 +251,15 @@
 //| We can also retrieve a property with the util function GET
 /// get(/databases/$(database)/documents/users/$(request.auth.uid)).data.<property>
 
-
-//!! RBAC - Role Based Access Control - Using 
+//!! RBAC - Role Based Access Control - Using
 
 //| Given through Custom Claims object properties
-//| This cannot be given through the Front-End, this has to be done via a Node process or through a cloud function 
-//| 
+//| This cannot be given through the Front-End, this has to be done via a Node process or through a cloud function
+//|
 
-//!! RBAC - Role Based Access Control - Setting 
+//!! RBAC - Role Based Access Control - Setting
 
-//| To Be Written ----------------------------------
+//| To Be Written ---------------------------------- See Firebase Cloud Functions
 
 //!! Security Rules for Collection Group Queries
 
@@ -268,18 +267,116 @@
 //| {<variable>=**} - the variable represents the full path
 //| So if we need to access the current path, we can simply reference the variable name and this will represent that current path
 
+//!! AngularFire Route Guards
 
-//!! AngularFire Route Guards 
-
-//| AngularFireAuthGuard provides a prebuilt canActivate Router Guard using AngularFireAuth. 
+//| AngularFireAuthGuard provides a prebuilt canActivate Router Guard using AngularFireAuth.
 //| By default unauthenticated users are not permitted to navigate to protected routes
 //$ https://github.com/angular/angularfire/blob/master/docs/auth/router-guards.md
-//! View this in the app-routing module 
+//! View this in the app-routing module
 
-
-//!! Serverless File Upload With Firebase Storage 
-//| AngularFireStorage - Service used 
+//!! Serverless File Upload With Firebase Storage
+//| AngularFireStorage - Service used
 //| The upload action will be a change event
 
 //| In the event of updating storage rules
 /// firebase deploy --only storage
+
+//!! -----------------------------------------------------------------
+//!! FIREBASE CLOUD FUNCTIONS ----------------------------------------
+//!! -----------------------------------------------------------------
+
+//| Cloud functions are integral to our setup as it's the very base for our servers actions
+//| The call to firebase authentication to create users with custom claims cannot be done in a
+//| secure way from the front end, this is why we need this code on the server/BE
+//| when we call the BE however, we do still need the credentials to do so, so we still need to do that in a secure way. This includes other actions such as payments
+//| This also allows us to have functionality that runs when we make changes on the BE data
+//| Such as, changing the timestamp of a documents field anytime the price field changes
+
+//| These are small pieces of Node code that run in the BE in response to a particular event in the firebase eco-system
+//| An example could be adding, updating or deleting a document, or even an http event etc.
+
+//| A server is always up and running, able to process as soon as there is an event at any time.
+//| THIS IS NOT THAT, Firebase cloud functions will not be running at all in the server.
+//| The FCF (Firebase cloud function) mechanism will allow us to scale our BE all the way down to ZERO
+//| If we are not making any requests, or triggering DB operations that trigger FCF's, uploading files or making requests to a FCF then NO SERVER AT ALL WILL BE RUNNING IN THE BE and you won't be charged
+
+//| If after a while, an event happens that triggers a FCF, then the following happens:
+//: A container will be prepared and bootstrapped
+//: The FCF will be deployed inside that cloud container
+//: And the function will be executed
+//* This process will take some time to bootstrap, this is known as The Cold Start-up Time
+
+//| An example of how this works:
+//> You define a FCF which is a trigger that detects the creation of documents on a collection
+//> If you update or delete the docs the trigger isn't executed, but if you add a doc, only then the trigger gets executed
+//> If there were no instances of the FCF running and ready to process that event, then the FB runtime in the BE is going to spin up a new container
+//> It will deploy the cloud function function in the container, and process the event using the cloud function.
+
+//> IF 10-20 seconds later a new similar event occurs (a new doc is added), then that SAME INSTANCE of the cloud function, which is still up and running, will process the request.
+//> So that second request will be processed MUCH faster and will continue to do so.
+
+//> If this process continues and it registers that you are adding a large batch of documents at the same time, it will bootstrap ANOTHER container and help process those requests.
+
+//> This continues additional containers will be created to meet the volume of requests allowing for sufficient scaling
+//> Once the requests subside and drop, so will the container needs and they will drop off and close as need be
+//> This means that once these close, if the requests pick up again, you will need to wait for the containers to create and bootstrap once again
+//> Once we aren't using anymore, it will scale all the way back down to ZERO
+
+//| FCF are implemented using the Google Cloud Platform
+//| Select > Project Settings > Service Accounts
+
+//| When we setup cloud functions in our project, we were supplied with an auto generated functions folder which contains all of our FCF's.
+//| Here you will see an index file which is the entry point for our functions module, which is the following import
+//| ANY EXPORT on this index.ts file will be considered a cloud function, so ensure that they are cloud functions
+//| This provides us with all the properties and functiionality
+/// import * as functions from "firebase-functions";
+
+//| The output of the functions, after compilation, will be in the libs folder.
+//| This is depployed to the cloud and that's how we deploy FCF's to firebase
+//> In order to compile, we perform the following:
+//> cd into functions folder
+//> npm run build - This will trigger the TS compiler and compile our function into the lib folders index file
+//! Always compile after changing your cloud functions
+
+//| One of the most common use cases of FCF's is database triggers
+//| This is a piece of logic that we want to trigger on the server side at the level of the firestore server in response to a db event
+//| Be sure to name the functions well enough to recongnise them for their objectives in the cloud dashboard, as you won't have much information outside of the name of the function
+//| A good practice is to name it in the following way:
+//: on<1><2>
+//> 1: What event the fn is responding to
+//> 2: What the fn is doing in response to an event
+//: EXAMPLE: on<LikeEvent><IncrementTotalLikes>
+
+//! FIRESTORE TRIGGER EXAMPLE
+//| We start by accessing functions
+/// export const onAddCourseUpdatePromoCounter = functions
+//| When we specify a function we can also specify what type of runtime requirements the function has
+//| such as what is the max timeout for the function, and also how much memory the function can consume
+//| If we don't provide this, the default params will be accepted.
+//| But if we have heavy data processing and we want to configure this we use the runWith API which takes in a config object, where we can specify a few params such as:
+//> timeout - 300s is the current max timeout for cloud functions
+//> memory - how much memory the function consumes
+///   .runWith({
+///     timeoutSeconds: 300,
+///     memory: "128MB",
+///   })
+//| We want a db trigger, so we select the firestore object
+//| And then we specify the event that we want to detect
+//| In this instance we want to detect a document creation, so we access the document API and provide the path to the document
+//| We then have the events we want to detect
+//> on<update | create | delete> to detect specific
+//> Or on<write> to detect ALL
+//| These take a function as an argument, and that function takes 2 arguments
+//> (dataSnapshot, context)
+//| DataSnapshot is a snapshot of the current data in the document, and context contains info such as the path variables of the doc we are creating on the db
+///   .firestore.document("courses/{courseId}")
+///   .onCreate(async (docSnapshot, context) => {
+//| This function is going to returns a promise, so we need to treat the function as a promise (async await)
+///     await functions.logger.debug(
+///       `Running add course trigger for courseId - context = ${context.params.courseId}`,
+///       `Doc Snapshot = ${docSnapshot.id}`
+///     );
+///   });
+//! ^^^^^^^^^^^^^^^^
+
+
