@@ -13,7 +13,9 @@ export const environment = {
     messagingSenderId: "712993612573",
     appId: "1:712993612573:web:8c5ef0f78ac86fb833f7f4",
   },
-  api: {},
+  api: {
+    createUser: "http://localhost:5001/angularuniversity-13b0e/us-central1/createUser"
+  },
 };
 
 /*

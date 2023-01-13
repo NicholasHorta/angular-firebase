@@ -380,3 +380,17 @@
 //! ^^^^^^^^^^^^^^^^
 
 
+
+//!! Create an HTTP Endpoint with Firebase Cloud Functions
+
+//| Two things:
+//: First: we add a new user in our users collection
+//: Second: Make a call to firebase authentication and add the user with its credentials, user and password, directly to the firebase authentication database. Which is a completely seperate database from out applicaitons database 
+//| The firebase authentication database is managed ONLY by the firebase authentication service
+//| This operation of adding a new user in a secure way and setting the custom claims, can ONLY be safely done from a backend 
+//| Same as with a payment, as payments need a secret key and this cannot be exposed in our front end code. 
+//! For these applications we NEED a REST endpoint, and we use HTTP endpoints for this
+
+
+
+
