@@ -5,6 +5,7 @@ import {concatMap, filter, map} from 'rxjs/operators';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Router} from '@angular/router';
 import { UserService } from './services/user.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -13,12 +14,11 @@ import { UserService } from './services/user.service';
 })
 export class AppComponent implements OnInit {
 
-  constructor(public user: UserService, private router: Router) {
+  constructor(public user: UserService, private router: Router, private token: AuthService) {
 
   }
 
   ngOnInit() {
-
   }
 
 

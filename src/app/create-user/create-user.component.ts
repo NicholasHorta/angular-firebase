@@ -26,6 +26,7 @@ export class CreateUserComponent {
     //| We can passing into it
     //: post<T>(url: string, body: any, options: { headers?: HttpHeaders | { [header: string]: string | string[]; }
     //! We still need to ensure that the URL is not able to be accessed by anyone, only authenticated users
+    console.log(`%c C4 LOG 1ST`, `background: black; color: red;`)
     this.http
       .post(environment.api.createUser, {
         email: user.email,

@@ -397,3 +397,29 @@
 //!! Calling a firebase cloud function REST endpoint 
 
 //| This will be shown in the create-user functionality
+
+
+//!! Angular HTTP Interceptor 
+
+//| Currently our implementation is still unsecure
+//| This is that a person could still intercept/attach the http function
+//| Since we know which user is logged into the application throught the JWT 
+//| When the new user is created, we can check that this user creating the request is an admin
+//| We need to grab the JWT and attatch it to the http request we're sending to our BE
+//| Once the request arrives at the BE and before executing ANY of the main logic that creates the user
+//: So we need to:
+//: First: Check if the user is correctly authenticated  
+//: Second: Check if the user is an administrator
+//| And ONLY if these two things are true, and can be proven
+//| by validating the signature of the JSON web token, only then will we allow the user creation to run
+
+
+//!!
+
+//! FE
+// create-user component
+// auth service
+// HTTP interceptor
+//! BE
+// Middleware
+// CreateUser Fn

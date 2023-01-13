@@ -1,6 +1,7 @@
-import * as functions from "firebase-functions";
 import { auth, db } from "./init";
 const express = require("express");
+import * as functions from "firebase-functions";
+import { getUserCredentialsMiddleware } from "./auth.middleware";
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
@@ -16,10 +17,26 @@ createUserApp.use(bodyParser.json());
 //| We can allow this by using the CORS middleware, we set the origin property to true
 createUserApp.use(cors, { origin: true });
 
+//| Our middleware
+createUserApp.use(getUserCredentialsMiddleware);
+
 createUserApp.post("/", async (req, res) => {
   functions.logger.debug("Calling create user function");
 
   try {
+    //! We can have our middleware perform the check prior to the rest of this function running
+    //| We are going to start by checking if the user is correctly authenticated by accessing the UID in the property of the request.
+    //| Remember, this is the property that we have just populated here using our middleware.
+    //| So if the user has a unique identifier that is valid, that came from a valid correctly signed JSON web token && if the user is a known administrator
+    //. ONLY THEN DO WE WANT THE CODE BELOW TO BE EXECUTED
+    if (!(req["uid"] && req["admin"])) {
+      const message = `Denied access to user creation service.`;
+      functions.logger.debug(message);
+      res.status(403).json({ message });
+      return;
+    }
+
+    functions.logger.debug('C4 LOG 5TH & FINAL >>>>>>>')
     const email = req.body.email;
     const password = req.body.password;
     const admin = req.body.admin;
@@ -46,8 +63,8 @@ createUserApp.post("/", async (req, res) => {
     //: We access our db
     //: Access the users collection
     //: SET a new document within it
-    //: We could add data but we simply need the user to exist 
-    db.doc(`users/${user.uid}`).set({})
+    //: We could add data but we simply need the user to exist
+    db.doc(`users/${user.uid}`).set({});
 
     res.status(200).json({
       message: "User created successfully",
@@ -59,3 +76,4 @@ createUserApp.post("/", async (req, res) => {
     });
   }
 });
+
