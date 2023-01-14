@@ -52,6 +52,5 @@ export class CreateUserComponent {
         | The URL is the FCF which is uploaded from our functions folder 
       */
 
-    console.log(user);
   }
 }

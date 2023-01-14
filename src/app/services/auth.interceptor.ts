@@ -32,26 +32,8 @@ export class AuthInterceptor implements HttpInterceptor {
       const cloned = request.clone({
         headers: request.headers.set("Authorization", this.token.authJwtToken),
       });
-      next
-        .handle(cloned)
-        .subscribe((i) =>
-          console.log(
-            `%c C4 LOG MUTATED`,
-            `background: yellow; color: purple;`,
-            i
-          )
-        );
       return next.handle(cloned);
     } else {
-      next
-        .handle(request)
-        .subscribe((i) =>
-          console.log(
-            `%c C4 LOG WITHOUT MUTATION`,
-            `background: yellow; color: purple;`,
-            i
-          )
-        );
       return next.handle(request);
     }
   }

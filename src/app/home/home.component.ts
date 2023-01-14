@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
   constructor(private router: Router, private coursesService: CoursesService, public usersSVC: UserService) {}
 
   ngOnInit() {
+    console.log('HOME');
     this.reloadCourses();
   }
 
