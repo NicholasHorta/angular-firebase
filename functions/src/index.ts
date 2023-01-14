@@ -96,6 +96,6 @@ export const onCourseDeletedUpdatePromoCounter = functions.firestore
 
 // !! HTTP ENDPOINT
 
-// This is a FULL express application, capable of handling multiple types of requests - POST PUT GET DELETE etc
+//* This is a FULL express application, capable of handling multiple types of requests - POST PUT GET DELETE etc
 
 export const createUser = functions.https.onRequest(createUserApp);

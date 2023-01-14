@@ -13,6 +13,7 @@ export function getUserCredentialsMiddleware(req, res, next) {
   //| We can extract it from req.headers.authorization which contains the JWT
   const jwt = req.headers.authorization;
     functions.logger.debug('C4 LOG 4TH >>>>>>>')
+    functions.logger.debug(jwt, 'JWT')
   //| first, we want to be sure the JWT is actually present
   if (jwt) {
     //| If there are credentials, we are going to grab them from the authorization header
@@ -29,7 +30,7 @@ export function getUserCredentialsMiddleware(req, res, next) {
         //| Using this payload, we can grab the unique identifier of the user using the UID property.
         //| Let's then take the unique identifier and let's save it directly on the request object under the UID the property as well.
         //| So now any middleware or endpoint that receives the request further down the middleware chain is going to have access to the unique identifier of the user
-        req["uid"].jwtPayload.uid;
+        req["uid"] = jwtPayload.uid;
 
         //| Also from the JSON Web token payload, we can grab the information if the user is an admin or not.
         //| Remember, this information is guaranteed to be correct because it was extracted from the body of a valid JSON Web token.

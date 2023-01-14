@@ -15,12 +15,13 @@ createUserApp.use(bodyParser.json());
 //| In order for the browser to allow this type of CORS, we need to have our backend tell the browser that it's okay to send CORS
 //| So only if our endpoint allows the browser for CORS to go through, will the browser allow the request to be made, otherwise ERR!
 //| We can allow this by using the CORS middleware, we set the origin property to true
-createUserApp.use(cors, { origin: true });
+createUserApp.use(cors({ origin: true }));
 
 //| Our middleware
 createUserApp.use(getUserCredentialsMiddleware);
 
 createUserApp.post("/", async (req, res) => {
+
   functions.logger.debug("Calling create user function");
 
   try {
@@ -29,6 +30,7 @@ createUserApp.post("/", async (req, res) => {
     //| Remember, this is the property that we have just populated here using our middleware.
     //| So if the user has a unique identifier that is valid, that came from a valid correctly signed JSON web token && if the user is a known administrator
     //. ONLY THEN DO WE WANT THE CODE BELOW TO BE EXECUTED
+
     if (!(req["uid"] && req["admin"])) {
       const message = `Denied access to user creation service.`;
       functions.logger.debug(message);
@@ -36,7 +38,7 @@ createUserApp.post("/", async (req, res) => {
       return;
     }
 
-    functions.logger.debug('C4 LOG 5TH & FINAL >>>>>>>')
+    functions.logger.debug("C4 LOG 5TH & FINAL >>>>>>>");
     const email = req.body.email;
     const password = req.body.password;
     const admin = req.body.admin;
@@ -69,6 +71,7 @@ createUserApp.post("/", async (req, res) => {
     res.status(200).json({
       message: "User created successfully",
     });
+
   } catch (err) {
     functions.logger.debug("Could not create user", err);
     res.status(500).json({
@@ -76,4 +79,6 @@ createUserApp.post("/", async (req, res) => {
     });
   }
 });
+
+
 
